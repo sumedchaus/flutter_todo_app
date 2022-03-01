@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo_app/thems.dart';
 import 'package:flutter_todo_app/widgets/my_input_filed.dart';
+import 'package:flutter_todo_app/widgets/reusable_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+import 'model/dropdown_model.dart';
 
 class AddTaskPage extends StatefulWidget {
   AddTaskPage({Key? key}) : super(key: key);
@@ -16,6 +19,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
   String _endTime = "09.30 PM";
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   int _selectedRemind = 5;
+  List<int> remindList = [5, 10, 15, 20];
+  String _selectedRepeat = "None";
+  List<String> repeatList = [
+    "None",
+    "Daily",
+    "Weekly",
+    "Monthly"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +87,26 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       ),
                     ),
                   ],
-                )
+                ),
+                ReusableDropdown(
+                  title: "Reminder",
+                  value: _selectedRemind.toString(),
+                  onChanged: (String val) {
+                    setState(() {
+                      _selectedRemind = int.parse(val);
+                    });
+                  },
+                  items: remindList,
+                ),
+                ReusableDropdown(
+                    title: "Repeat",
+                    value: _selectedRepeat,
+                    items: repeatList,
+                    onChanged: (String val){
+                      setState(() {
+                        _selectedRepeat = val;
+                      });
+                    })
               ],
             ),
           ),
@@ -123,7 +153,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-  _getTimeFromUser ({required bool isStartTime}) async{
+  _getTimeFromUser({required bool isStartTime}) async {
     var pickTime = await _showTimePicker();
     String _formatedTime = pickTime.format(context);
     if (pickTime == null) {
@@ -131,12 +161,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
     } else if (isStartTime == true) {
       setState(() {
         _startTime = _formatedTime;
-
       });
     } else if (isStartTime == false) {
       setState(() {
         _endTime = _formatedTime;
-
       });
     }
   }
@@ -150,3 +178,41 @@ class _AddTaskPageState extends State<AddTaskPage> {
             minute: int.parse(_startTime.split(":")[1].split(" ")[0])));
   }
 }
+
+
+
+
+
+
+//       Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       "Remind",
+//                       style: titleStyle,
+//                     ),
+//                     Container(
+//                       padding: const EdgeInsets.symmetric(horizontal: 8),
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.circular(15),
+//                         border: Border.all(color: Colors.grey.withOpacity(0.3)),
+//                       ),
+//                       child: DropdownButton(
+//                           isExpanded: true,
+//                           underline: SizedBox.shrink(),
+//                           value: _selectedRemind.toString(),
+//                           items: remindList
+//                               .map<DropdownMenuItem<String>>((int value) {
+//                             return DropdownMenuItem<String>(
+//                               value: value.toString(),
+//                               child: Text(value.toString()),
+//                             );
+//                           }).toList(),
+//                           onChanged: (String? newValue) {
+//                             setState(() {
+//                               _selectedRemind = int.parse(newValue!);
+//                             });
+//                           }),
+//                     ),
+//                   ],
+//                 )
